@@ -29,12 +29,6 @@
             "Dynamic\\Foxy\\Tests\\": "tests/"
         }
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:dynamic/silverstripe-foxy.git"
-        }
-    ],
     "extra": {
         "branch-alias": {
             "dev-master": "1.x-dev"
