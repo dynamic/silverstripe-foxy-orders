@@ -265,7 +265,7 @@ class Order extends DataObject implements PermissionProvider
                 $this->MemberID = $customer->ID;
             }
         }
-        $this->extend('updateParseOrderCustomer',  $transaction, $customer);
+        $this->extend('updateParseOrderCustomer', $transaction, $customer);
     }
 
     /**
