@@ -3,6 +3,8 @@
 namespace Dynamic\Foxy\Orders\Controller;
 
 use Dynamic\Foxy\Model\FoxyHelper;
+use Dynamic\Foxy\Orders\Factory\OrderFactory;
+use Dynamic\Foxy\Orders\Foxy\Transaction;
 use Dynamic\Foxy\Orders\Model\Order;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
@@ -41,8 +43,10 @@ class FoxyController extends Controller
         $request = $this->getRequest();
         if ($request->postVar('FoxyData') || $request->postVar('FoxySubscriptionData')) {
             $this->processFoxyRequest($request);
+
             return 'foxy';
         }
+
         return 'No FoxyData or FoxySubscriptionData received.';
     }
 
@@ -71,11 +75,10 @@ class FoxyController extends Controller
      */
     private function parseFeedData($encryptedData)
     {
-        $decryptedData = $this->decryptFeedData($encryptedData);
-        $orders = new \SimpleXMLElement($decryptedData);
-        // loop over each transaction to find FoxyCart Order ID
-        foreach ($orders->transactions->transaction as $transaction) {
-            $this->processTransaction($transaction, $encryptedData);
+        $transaction = Transaction::create($encryptedData);
+
+        if (!OrderFactory::create($transaction)->getOrder()) {
+            //log error and send parse error notification
         }
     }
 
@@ -107,6 +110,7 @@ class FoxyController extends Controller
     private function decryptFeedData($data)
     {
         $helper = FoxyHelper::create();
+
         return \rc4crypt::decrypt($helper->config()->get('secret'), $data);
     }
 }
