@@ -8,6 +8,7 @@ use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Forms\DateField;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBHTMLVarchar;
+use SilverStripe\ORM\HasManyList;
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Permission;
@@ -31,6 +32,8 @@ use SilverStripe\Security\PermissionProvider;
  *
  * @property int MemberID
  * @method Member Member
+ *
+ * @method HasManyList Details
  */
 class Order extends DataObject implements PermissionProvider
 {
@@ -209,7 +212,7 @@ class Order extends DataObject implements PermissionProvider
     protected function onBeforeWrite()
     {
         parent::onBeforeWrite();
-        $this->parseOrder();
+        //$this->parseOrder();
     }
 
     /**

@@ -19,9 +19,9 @@ class OrderFactory
     use Injectable;
 
     /**
-     * @var string The encrypted Foxy.io xml data feed response.
+     * @var Transaction
      */
-    private $encrypted_order_data;
+    private $transaction;
 
     /**
      * @var Order
@@ -30,36 +30,32 @@ class OrderFactory
 
     /**
      * OrderFactory constructor.
-     * @param null $encryptedOrderData
+     * @param Transaction|null $transaction
      */
-    public function __construct($encryptedOrderData = null)
+    public function __construct(Transaction $transaction = null)
     {
-        if ($encryptedOrderData !== null) {
-            $this->setEncryptedOrderData($encryptedOrderData);
+        if ($transaction !== null && $transaction instanceof Transaction) {
+            $this->setTransaction($transaction);
         }
     }
 
     /**
-     * Set the encrypted Foxy.io xml data feed response.
-     *
-     * @param $encryptedData
+     * @param Transaction $transaction
      * @return $this
      */
-    public function setEncryptedOrderData($encryptedData)
+    public function setTransaction(Transaction $transaction)
     {
-        $this->encrypted_order_data = $encryptedData;
+        $this->transaction = $transaction;
 
         return $this;
     }
 
     /**
-     * Return the encrypted Foxy.io xml data feed response.
-     *
-     * @return string
+     * @return Transaction
      */
-    protected function getEncryptedOrderData()
+    protected function getTransaction()
     {
-        return $this->encrypted_order_data;
+        return $this->transaction;
     }
 
     /**
@@ -85,10 +81,14 @@ class OrderFactory
      */
     protected function setOrder()
     {
-        $transaction = Transaction::create($this->getEncryptedOrderData())->getParsedTransactionData();
+        $transaction = $this->getTransaction()->getParsedTransactionData();
 
         $order = (Order::get()->filter('OrderID', $transaction->transaction->id)->first())
             ?: Order::create();
+
+        if ($order->exists()) {
+            $this->cleanRelatedOrderData($order);
+        }
 
         foreach ($this->config()->get('order_mapping') as $foxy => $ssFoxy) {
             $order->{$ssFoxy} = $transaction->transaction->{$foxy};
@@ -96,8 +96,18 @@ class OrderFactory
 
         $order->write();
 
-        $this->order = $order;
+        $order->Details()->addMany(OrderDetailFactory::create($this->getTransaction())->getOrderDetails());
+
+        $this->order = Order::get()->byID($order->ID);
 
         return $this;
+    }
+
+    /**
+     * @param Order $order
+     */
+    private function cleanRelatedOrderData(Order $order)
+    {
+        $order->Details()->removeAll();
     }
 }

@@ -40,7 +40,7 @@ class Transaction
 
     /**
      * Transaction constructor.
-     * @param $data string urlencoded, encrypted foxy response data from the xml data feed
+     * @param $data string encrypted foxy response data from the xml data feed
      * @throws ValidationException
      */
     public function __construct($data)
@@ -49,7 +49,7 @@ class Transaction
     }
 
     /**
-     * Set the decrtyped transaction data to use.
+     * Set the decrypted transaction data to use.
      *
      * @param $data
      * @return $this
