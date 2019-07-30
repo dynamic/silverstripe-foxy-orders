@@ -14,3 +14,4 @@ Dynamic\Foxy\Orders\Factory\OrderFactory:
     order_total: 'OrderTotal'
     receipt_url: 'ReceiptURL'
     status: 'OrderStatus'
+    customer_id: 'CustomerID'
