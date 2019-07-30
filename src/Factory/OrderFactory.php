@@ -2,7 +2,7 @@
 
 namespace Dynamic\Foxy\Orders\Factory;
 
-use Dynamic\Foxy\Orders\Foxy\Transaction;
+use Dynamic\Foxy\Parser\Foxy\Transaction;
 use Dynamic\Foxy\Orders\Model\Order;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Extensible;
