@@ -2,60 +2,20 @@
 
 namespace Dynamic\Foxy\Orders\Factory;
 
-use Dynamic\Foxy\Parser\Foxy\Transaction;
 use Dynamic\Foxy\Orders\Model\OrderDetail;
-use SilverStripe\Core\Config\Configurable;
-use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\ORM\ArrayList;
+use SilverStripe\View\ArrayData;
 
 /**
  * Class OrderDetailFactory
  * @package Dynamic\Foxy\Orders\Factory
  */
-class OrderDetailFactory
+class OrderDetailFactory extends FoxyFactory
 {
-    use Configurable;
-    use Injectable;
-
-    /**
-     * @var Transaction
-     */
-    private $transaction;
-
     /**
      * @var ArrayList
      */
     private $order_details;
-
-    /**
-     * OrderDetailFactory constructor.
-     * @param Transaction|null $transaction
-     */
-    public function __construct(Transaction $transaction = null)
-    {
-        if ($transaction instanceof Transaction && $transaction !== null) {
-            $this->setTransaction($transaction);
-        }
-    }
-
-    /**
-     * @param Transaction $transaction
-     * @return $this
-     */
-    public function setTransaction(Transaction $transaction)
-    {
-        $this->transaction = $transaction;
-
-        return $this;
-    }
-
-    /**
-     * @return Transaction
-     */
-    protected function getTransaction()
-    {
-        return $this->transaction;
-    }
 
     /**
      * @return $this
@@ -65,16 +25,22 @@ class OrderDetailFactory
     {
         $details = ArrayList::create();
 
+        /** @var ArrayList $products */
         $products = $this->getTransaction()->getParsedTransactionData()->products;
 
+        /** @var ArrayData $detail */
         foreach ($products as $detail) {
             $orderDetail = OrderDetail::create();
 
             foreach ($this->config()->get('order_detail_mapping') as $foxy => $ssFoxy) {
-                $orderDetail->{$ssFoxy} = $detail->{$foxy};
+                if ($detail->hasField($foxy)) {
+                    $orderDetail->{$ssFoxy} = $detail->getField($foxy);
+                }
             }
 
             $orderDetail->write();
+
+            $orderDetail->OrderOptions()->addMany(OrderOptionFactory::create($detail)->getOrderOptions());
 
             $details->push($orderDetail);
         }

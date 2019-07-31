@@ -2,61 +2,26 @@
 
 namespace Dynamic\Foxy\Orders\Factory;
 
-use Dynamic\Foxy\Parser\Foxy\Transaction;
 use Dynamic\Foxy\Orders\Model\Order;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Extensible;
 use SilverStripe\Core\Injector\Injectable;
+use SilverStripe\View\ArrayData;
 
 /**
  * Class OrderFactory
  * @package Dynamic\Foxy\Orders\Factory
  */
-class OrderFactory
+class OrderFactory extends FoxyFactory
 {
     use Configurable;
     use Extensible;
     use Injectable;
 
     /**
-     * @var Transaction
-     */
-    private $transaction;
-
-    /**
      * @var Order
      */
     private $order;
-
-    /**
-     * OrderFactory constructor.
-     * @param Transaction|null $transaction
-     */
-    public function __construct(Transaction $transaction = null)
-    {
-        if ($transaction !== null && $transaction instanceof Transaction) {
-            $this->setTransaction($transaction);
-        }
-    }
-
-    /**
-     * @param Transaction $transaction
-     * @return $this
-     */
-    public function setTransaction(Transaction $transaction)
-    {
-        $this->transaction = $transaction;
-
-        return $this;
-    }
-
-    /**
-     * @return Transaction
-     */
-    protected function getTransaction()
-    {
-        return $this->transaction;
-    }
 
     /**
      * Return the Order object from a given transaction data set.
@@ -81,17 +46,23 @@ class OrderFactory
      */
     protected function setOrder()
     {
-        $transaction = $this->getTransaction()->getParsedTransactionData();
+        /** @var ArrayData $transaction */
+        $transaction = $this->getTransaction()->getParsedTransactionData()->getField('transaction');
 
-        $order = (Order::get()->filter('OrderID', $transaction->transaction->id)->first())
-            ?: Order::create();
+        /** @var $order Order */
+        if ($transaction->hasField('id')
+            && !($order = Order::get()->filter('OrderID', $transaction->getField('id'))->first())) {
+            $order = Order::create();
+        }
 
         if ($order->exists()) {
             $this->cleanRelatedOrderData($order);
         }
 
         foreach ($this->config()->get('order_mapping') as $foxy => $ssFoxy) {
-            $order->{$ssFoxy} = $transaction->transaction->{$foxy};
+            if ($transaction->hasField($foxy)) {
+                $order->{$ssFoxy} = $transaction->getField($foxy);
+            }
         }
 
         $order->write();
