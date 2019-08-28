@@ -23,5 +23,4 @@ class MemberDataExtension extends DataExtension
     {
         $fields->replaceField('Customer_ID', TextField::create('Customer_ID')->performReadonlyTransformation());
     }
-
 }
