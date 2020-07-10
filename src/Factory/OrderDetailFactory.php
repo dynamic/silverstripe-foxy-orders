@@ -54,7 +54,10 @@ class OrderDetailFactory extends FoxyFactory
 
             $orderDetail->write();
 
-            $orderDetail->OrderVariations()->addMany(OrderVariationFactory::create($detail, $orderDetail->ProductID)->getOrderVariations());
+            $orderDetail->OrderVariations()->addMany(OrderVariationFactory::create(
+                $detail,
+                $orderDetail->ProductID
+            )->getOrderVariations());
 
             $details->push($orderDetail);
         }

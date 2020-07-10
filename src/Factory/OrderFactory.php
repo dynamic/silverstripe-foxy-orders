@@ -51,8 +51,7 @@ class OrderFactory extends FoxyFactory
         $transaction = $this->getTransaction()->getParsedTransactionData()->getField('transaction');
 
         /** @var $order Order */
-        if (
-            $transaction->hasField('id')
+        if ($transaction->hasField('id')
             && !($order = Order::get()->filter('OrderID', $transaction->getField('id'))->first())
         ) {
             $order = Order::create();
