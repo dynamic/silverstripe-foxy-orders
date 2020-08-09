@@ -2,6 +2,8 @@
 
 namespace Dynamic\Foxy\Orders\Factory;
 
+use Dynamic\Foxy\Model\FoxyHelper;
+use Dynamic\Foxy\Model\Variation;
 use Dynamic\Foxy\Orders\Model\Order;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Extensible;
@@ -77,6 +79,29 @@ class OrderFactory extends FoxyFactory
         $order->Details()->addMany(OrderDetailFactory::create($this->getTransaction())->getOrderDetails());
 
         $this->order = Order::get()->byID($order->ID);
+
+        if ($order->Details()->count()) {
+            foreach ($order->Details() as $detail) {
+                if ($product = FoxyHelper::singleton()->getProducts()->filter('ID', $detail->ProductID)->first()) {
+                    if ($product->hasMethod('getNumberPurchasedUpdate')) {
+                        $product->NumberPurchased = $product->getNumberPurchasedUpdate();
+                        $product->write();
+                    }
+                }
+                if ($detail->OrderVariations()->count()) {
+                    foreach ($detail->OrderVariations() as $orderVariation) {
+                        if ($orderVariation->VariationID) {
+                            if ($variaton = Variation::get()->filter('ID', $orderVariation->VariationID)->first()) {
+                                if ($variaton->hasMethod('getNumberPurchasedUpdate')) {
+                                    $variaton->NumberPurchased = $variaton->getNumberPurchasedUpdate();
+                                    $variaton->write();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         return $this;
     }
