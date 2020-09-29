@@ -3,104 +3,80 @@
 namespace Dynamic\Foxy\Orders\Test\Model;
 
 use Dynamic\Foxy\Extension\Purchasable;
+use Dynamic\Foxy\Model\Variation;
 use Dynamic\Foxy\Orders\Model\Order;
-use Dynamic\Foxy\Test\TestOnly\TestProduct;
+use Dynamic\Foxy\Orders\Tests\TestOnly\Extension\TestVariationDataExtension;
+use Dynamic\Foxy\Orders\Tests\TestOnly\Page\TestProduct;
 use SilverStripe\Dev\SapphireTest;
-use SilverStripe\Forms\FieldList;
-use SilverStripe\i18n\i18n;
-use SilverStripe\Security\Member;
 
+/**
+ * Class OrderTest
+ * @package Dynamic\Foxy\Orders\Test\Model
+ */
 class OrderTest extends SapphireTest
 {
     /**
-     * @var string
+     * @var string[]
      */
-    protected static $fixture_file = '../fixtures.yml';
+    protected static $fixture_file = [
+        '../orders.yml',
+        '../orderhistory.yml',
+        '../customers.yml',
+    ];
+
+    /**
+     * @var string[]
+     */
+    protected static $extra_dataobjects = [
+        TestProduct::class,
+    ];
+
+    /**
+     * @var \string[][]
+     */
+    protected static $required_extensions = [
+        Variation::class => [
+            TestVariationDataExtension::class,
+        ],
+        TestProduct::class => [
+            Purchasable::class,
+        ],
+    ];
 
     /**
      *
      */
     public function testGetCMSFields()
     {
-        $object = $this->objFromFixture(Order::class, 'one');
-        $fields = $object->getCMSFields();
-        $this->assertInstanceOf(FieldList::class, $fields);
+        $order = $this->objFromFixture(Order::class, 'one');
+        $this->assertNull($order->getCMSFields()->dataFieldByName('Response'));
     }
 
     /**
      *
      */
-    public function testProvidePermissions()
+    public function testReceiptLink()
     {
-        /** @var TestProduct $object */
-        $object = singleton(Order::class);
+        /** @var Order $order */
+        $order = $this->objFromFixture(Order::class, 'one');
 
-        i18n::set_locale('en');
-        $expected = [
-            'MANAGE_FOXY_ORDERS' => [
-                'name' => 'Manage orders',
-                'category' => 'Foxy',
-                'help' => 'Manage orders and view recipts',
-                'sort' => 400
-            ]
-        ];
-        $this->assertEquals($expected, $object->providePermissions());
+        $this->assertContains(
+            'target="_blank" class="cms-panel-link action external-link">view</a>',
+            $order->ReceiptLink()
+        );
     }
 
     /**
      *
      */
-    public function testCanCreate()
+    public function testGetReceiptLink()
     {
-        /** @var Order $object */
-        $object = singleton(Order::class);
-        /** @var \SilverStripe\Security\Member $admin */
-        $admin = $this->objFromFixture(Member::class, 'admin');
-        /** @var \SilverStripe\Security\Member $siteOwner */
-        $siteOwner = $this->objFromFixture(Member::class, 'site-owner');
-        /** @var \SilverStripe\Security\Member $default */
-        $default = $this->objFromFixture(Member::class, 'default');
+        /** @var Order $order */
+        $order = $this->objFromFixture(Order::class, 'one');
 
-        $this->assertFalse($object->canCreate($default));
-        $this->assertFalse($object->canCreate($admin));
-        $this->assertFalse($object->canCreate($siteOwner));
-    }
-
-    /**
-     *
-     */
-    public function testCanEdit()
-    {
-        /** @var Order $object */
-        $object = singleton(Order::class);
-        /** @var \SilverStripe\Security\Member $admin */
-        $admin = $this->objFromFixture(Member::class, 'admin');
-        /** @var \SilverStripe\Security\Member $siteOwner */
-        $siteOwner = $this->objFromFixture(Member::class, 'site-owner');
-        /** @var \SilverStripe\Security\Member $default */
-        $default = $this->objFromFixture(Member::class, 'default');
-
-        $this->assertFalse($object->canEdit($default));
-        $this->assertFalse($object->canEdit($admin));
-        $this->assertFalse($object->canEdit($siteOwner));
-    }
-
-    /**
-     *
-     */
-    public function testCanDelete()
-    {
-        /** @var Order $object */
-        $object = singleton(Order::class);
-        /** @var \SilverStripe\Security\Member $admin */
-        $admin = $this->objFromFixture(Member::class, 'admin');
-        /** @var \SilverStripe\Security\Member $siteOwner */
-        $siteOwner = $this->objFromFixture(Member::class, 'site-owner');
-        /** @var \SilverStripe\Security\Member $default */
-        $default = $this->objFromFixture(Member::class, 'default');
-
-        $this->assertFalse($object->canDelete($default));
-        $this->assertFalse($object->canDelete($admin));
-        $this->assertFalse($object->canDelete($siteOwner));
+        $this->assertContains(
+            'target="_blank" class="cms-panel-link action external-link">view</a>',
+            $order->getReceiptLink()
+        );
     }
 }
