@@ -66,6 +66,13 @@ class OrderDetail extends DataObject
     ];
 
     /**
+     * @var bool[]
+     */
+    private static $indexes = [
+        'ProductCode' => true,
+    ];
+
+    /**
      * @var string
      */
     private static $table_name = 'FoxyOrderDetail';
