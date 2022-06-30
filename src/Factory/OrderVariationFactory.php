@@ -102,13 +102,15 @@ class OrderVariationFactory
                 }
             }
 
-            $productVariation = Variation::get()->filter([
-                'Title' => $variation->Value,
-                'ProductID' => $this->getProduct()->ID,
-            ])->first();
+            if ($this->getProduct()) {
+                $productVariation = Variation::get()->filter([
+                    'Title' => $variation->Value,
+                    'ProductID' => $this->getProduct()->ID,
+                ])->first();
 
-            if ($productVariation) {
-                $variation->VariationID = $productVariation->ID;
+                if ($productVariation) {
+                    $variation->VariationID = $productVariation->ID;
+                }
             }
 
             $variation->write();
