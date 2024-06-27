@@ -42,7 +42,7 @@ class Order extends DataObject implements PermissionProvider
      */
     private static $db = [
         'StoreID' => 'Int',
-        'OrderID' => 'Int',
+        'OrderID' => 'BigInt',
         'Email' => 'Varchar(255)',
         'TransactionDate' => 'DBDatetime',
         'ProductTotal' => 'Currency',
