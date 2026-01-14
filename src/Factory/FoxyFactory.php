@@ -2,50 +2,35 @@
 
 namespace Dynamic\Foxy\Orders\Factory;
 
-use Dynamic\Foxy\Parser\Foxy\Transaction;
+use Dynamic\Foxy\Parser\Foxy\TransactionInterface;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
 
 /**
- * Class FoxyFactory
- * @package Dynamic\Foxy\Orders\Factory
+ * Base factory class for processing Foxy transaction data.
  */
 class FoxyFactory
 {
     use Configurable;
     use Injectable;
 
-    /**
-     * @var Transaction
-     */
-    private $transaction;
+    private ?TransactionInterface $transaction = null;
 
-    /**
-     * OrderDetailFactory constructor.
-     * @param Transaction|null $transaction
-     */
-    public function __construct(Transaction $transaction = null)
+    public function __construct(?TransactionInterface $transaction = null)
     {
-        if ($transaction instanceof Transaction && $transaction !== null) {
+        if ($transaction instanceof TransactionInterface) {
             $this->setTransaction($transaction);
         }
     }
 
-    /**
-     * @param Transaction $transaction
-     * @return $this
-     */
-    public function setTransaction(Transaction $transaction)
+    public function setTransaction(TransactionInterface $transaction): static
     {
         $this->transaction = $transaction;
 
         return $this;
     }
 
-    /**
-     * @return Transaction
-     */
-    protected function getTransaction()
+    protected function getTransaction(): ?TransactionInterface
     {
         return $this->transaction;
     }

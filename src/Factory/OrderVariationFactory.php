@@ -5,91 +5,61 @@ namespace Dynamic\Foxy\Orders\Factory;
 use Dynamic\Foxy\Model\FoxyHelper;
 use Dynamic\Foxy\Model\Variation;
 use Dynamic\Foxy\Orders\Model\OrderVariation;
-use GraphQL\Error\Debug;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\View\ArrayData;
 
 /**
- * Class OrderVariationFactory
- * @package Dynamic\Foxy\Orders\Factory
+ * Factory for creating OrderVariation records from Foxy product variation data.
  */
 class OrderVariationFactory
 {
     use Configurable;
     use Injectable;
 
-    /**
-     * @var
-     */
-    private $order_variations;
+    private ?ArrayList $order_variations = null;
 
-    /**
-     * @var ArrayData
-     */
-    private $foxy_product;
+    private ?ArrayData $foxy_product = null;
 
-    /**
-     * @var
-     */
-    private $product;
+    private mixed $product = null;
 
-    /**
-     * OrderVariationFactory constructor.
-     * @param ArrayData|null $foxyProduct
-     */
-    public function __construct(ArrayData $foxyProduct = null, $productID = 0)
+    public function __construct(?ArrayData $foxyProduct = null, int $productID = 0)
     {
-        if ($foxyProduct instanceof ArrayData && $foxyProduct !== null) {
+        if ($foxyProduct instanceof ArrayData) {
             $this->setFoxyProduct($foxyProduct);
             $this->setProduct($productID);
         }
     }
 
-    /**
-     * @param $foxyProduct
-     * @return $this
-     */
-    public function setFoxyProduct($foxyProduct)
+    public function setFoxyProduct(ArrayData $foxyProduct): static
     {
         $this->foxy_product = $foxyProduct;
 
         return $this;
     }
 
-    /**
-     * @return ArrayData
-     */
-    protected function getFoxyProduct()
+    protected function getFoxyProduct(): ?ArrayData
     {
         return $this->foxy_product;
     }
 
-    /**
-     * @param $productID
-     * @return $this
-     */
-    public function setProduct($productID)
+    public function setProduct(int $productID): static
     {
         $this->product = FoxyHelper::singleton()->getProducts()->filter('ID', $productID)->first();
 
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    protected function getProduct()
+    protected function getProduct(): mixed
     {
         return $this->product;
     }
 
     /**
-     * @return $this
      * @throws \SilverStripe\ORM\ValidationException
      */
-    public function setOrderVariations()
+    public function setOrderVariations(): static
     {
         $variations = ArrayList::create();
 
@@ -122,10 +92,7 @@ class OrderVariationFactory
         return $this;
     }
 
-    /**
-     * @return ArrayList
-     */
-    public function getOrderVariations()
+    public function getOrderVariations(): ArrayList
     {
         if (!$this->order_variations instanceof ArrayList) {
             $this->setOrderVariations();

@@ -7,19 +7,16 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataExtension;
 
+/**
+ * Extends Member to add order history.
+ */
 class MemberDataExtension extends DataExtension
 {
-    /**
-     * @var array
-     */
-    private static $has_many = [
+    private static array $has_many = [
         'Orders' => Order::class,
     ];
 
-    /**
-     * @param FieldList $fields
-     */
-    public function updateCMSFields(FieldList $fields)
+    public function updateCMSFields(FieldList $fields): void
     {
         $fields->replaceField('Customer_ID', TextField::create('Customer_ID')->performReadonlyTransformation());
     }

@@ -2,38 +2,30 @@
 
 namespace Dynamic\Foxy\Orders\Task;
 
-use Dynamic\Foxy\Model\FoxyHelper;
 use Dynamic\Foxy\Orders\Factory\OrderFactory;
 use Dynamic\Foxy\Orders\Model\Order;
 use Dynamic\Foxy\Parser\Foxy\Transaction;
-use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\BuildTask;
+use SilverStripe\Control\HTTPRequest;
 
+/**
+ * Task to reprocess orders with incorrect OrderID values.
+ */
 class OrderIDReprocess extends BuildTask
 {
-    /**
-     * @var string
-     */
     protected $title = 'Reprocess Order ID';
 
-    /**
-     * @var string
-     */
     protected $description = 'Reprocess Orders to correct order ID';
 
-    /**
-     * @var string
-     */
     private static $segment = 'OrderIDReprocess';
 
     /**
-     * @param $request
-     * @return void
      * @throws \SilverStripe\ORM\ValidationException
      */
-    public function run($request)
+    public function run($request): void
     {
         foreach ($this->yieldOrders() as $order) {
+            // Note: Stored responses are always XML format from legacy datafeed
             $transaction = Transaction::create(urldecode($order->Response));
             $reprocessedOrder = OrderFactory::create($transaction)->getOrder();
 
@@ -41,14 +33,10 @@ class OrderIDReprocess extends BuildTask
 
             echo 'Deleting legacy Order ID: ' . $order->ID . PHP_EOL;
             $order->delete();
-
         }
     }
 
-    /**
-     * @return \Generator
-     */
-    protected function yieldOrders()
+    protected function yieldOrders(): \Generator
     {
         foreach (Order::get()->filter('OrderID', 2147483647) as $order) {
             yield $order;

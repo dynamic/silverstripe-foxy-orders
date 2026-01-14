@@ -5,8 +5,6 @@ namespace Dynamic\Foxy\Orders\Model;
 use Dynamic\Foxy\Extension\Purchasable;
 use SilverStripe\Forms\DateField;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\GridField\GridField;
-use SilverStripe\Forms\GridField\GridFieldConfig_RecordViewer;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBHTMLVarchar;
 use SilverStripe\ORM\HasManyList;
@@ -15,32 +13,11 @@ use SilverStripe\Security\Permission;
 use SilverStripe\Security\PermissionProvider;
 
 /**
- * Class Order
- * @package Dynamic\Foxy\Model
- *
- * @property \SilverStripe\ORM\FieldType\DBInt StoreID
- * @property \SilverStripe\ORM\FieldType\DBInt OrderID
- * @property \SilverStripe\ORM\FieldType\DBVarchar Email
- * @property \SilverStripe\ORM\FieldType\DBDatetime TransactionDate
- * @property \SilverStripe\ORM\FieldType\DBCurrency ProductTotal
- * @property \SilverStripe\ORM\FieldType\DBCurrency TaxTotal
- * @property \SilverStripe\ORM\FieldType\DBCurrency ShippingTotal
- * @property \SilverStripe\ORM\FieldType\DBCurrency OrderTotal
- * @property \SilverStripe\ORM\FieldType\DBVarchar ReceiptURL
- * @property \SilverStripe\ORM\FieldType\DBVarchar OrderStatus
- * @property \SilverStripe\ORM\FieldType\DBText Response
- *
- * @property int MemberID
- * @method Member Member
- *
- * @method HasManyList Details
+ * Represents a Foxy.io order imported from the data feed.
  */
 class Order extends DataObject implements PermissionProvider
 {
-    /**
-     * @var array
-     */
-    private static $db = [
+    private static array $db = [
         'StoreID' => 'Int',
         'OrderID' => 'BigInt',
         'Email' => 'Varchar(255)',
@@ -55,44 +32,23 @@ class Order extends DataObject implements PermissionProvider
         'CustomerID' => 'Int',
     ];
 
-    /**
-     * @var array
-     */
-    private static $has_one = [
+    private static array $has_one = [
         'Member' => Member::class,
     ];
 
-    /**
-     * @var array
-     */
-    private static $has_many = [
+    private static array $has_many = [
         'Details' => OrderDetail::class,
     ];
 
-    /**
-     * @var string
-     */
-    private static $singular_name = 'Order';
+    private static string $singular_name = 'Order';
 
-    /**
-     * @var string
-     */
-    private static $plural_name = 'Orders';
+    private static string $plural_name = 'Orders';
 
-    /**
-     * @var string
-     */
-    private static $description = 'Orders from FoxyCart Datafeed';
+    private static string $description = 'Orders from FoxyCart Datafeed';
 
-    /**
-     * @var string
-     */
-    private static $default_sort = 'TransactionDate DESC, ID DESC';
+    private static string $default_sort = 'TransactionDate DESC, ID DESC';
 
-    /**
-     * @var array
-     */
-    private static $summary_fields = [
+    private static array $summary_fields = [
         'OrderID',
         'TransactionDate.Nice',
         'Email',
@@ -103,10 +59,7 @@ class Order extends DataObject implements PermissionProvider
         'ReceiptLink',
     ];
 
-    /**
-     * @var array
-     */
-    private static $searchable_fields = [
+    private static array $searchable_fields = [
         'OrderID',
         'TransactionDate' => [
             'field' => DateField::class,
@@ -116,33 +69,19 @@ class Order extends DataObject implements PermissionProvider
         'OrderTotal',
     ];
 
-    /**
-     * @var array
-     */
-    private static $casting = [
+    private static array $casting = [
         'ReceiptLink' => 'HTMLVarchar',
     ];
 
-    /**
-     * @var array
-     */
-    private static $indexes = [
-        'OrderID' => true, // make unique
+    private static array $indexes = [
+        'OrderID' => true,
     ];
 
-    /**
-     * @var string
-     */
-    private static $table_name = 'FoxyOrder';
+    private static string $table_name = 'FoxyOrder';
 
-    /**
-     * @param bool $includerelations
-     *
-     * @return array|string
-     */
-    public function fieldLabels($includerelations = true)
+    public function fieldLabels($includerelations = true): array
     {
-        $labels = parent::fieldLabels();
+        $labels = parent::fieldLabels($includerelations);
         $labels['StoreID'] = _t(__CLASS__ . '.StoreID', 'Store ID#');
         $labels['OrderID'] = _t(__CLASS__ . '.OrderID', 'Order ID#');
         $labels['TransactionDate'] = _t(__CLASS__ . '.TransactionDate', 'Date');
@@ -159,10 +98,7 @@ class Order extends DataObject implements PermissionProvider
         return $labels;
     }
 
-    /**
-     * @return FieldList
-     */
-    public function getCMSFields()
+    public function getCMSFields(): FieldList
     {
         $this->beforeUpdateCMSFields(function (FieldList $fields) {
             $fields->removeByName(['Response']);
@@ -171,18 +107,12 @@ class Order extends DataObject implements PermissionProvider
         return parent::getCMSFields();
     }
 
-    /**
-     * @return mixed
-     */
-    public function ReceiptLink()
+    public function ReceiptLink(): DBHTMLVarchar
     {
         return $this->getReceiptLink();
     }
 
-    /**
-     * @return mixed
-     */
-    public function getReceiptLink()
+    public function getReceiptLink(): DBHTMLVarchar
     {
         $obj = DBHTMLVarchar::create();
         $obj->setValue(
@@ -192,10 +122,7 @@ class Order extends DataObject implements PermissionProvider
         return $obj;
     }
 
-    /**
-     * @return array
-     */
-    public function providePermissions()
+    public function providePermissions(): array
     {
         return [
             'MANAGE_FOXY_ORDERS' => [
@@ -216,43 +143,22 @@ class Order extends DataObject implements PermissionProvider
         ];
     }
 
-    /**
-     * @param bool $member
-     *
-     * @return bool|int
-     */
-    public function canView($member = null)
+    public function canView($member = null): bool
     {
         return Permission::checkMember($member, 'MANAGE_FOXY_ORDERS');
     }
 
-    /**
-     * @param null $member
-     *
-     * @return bool
-     */
-    public function canEdit($member = null)
+    public function canEdit($member = null): bool
     {
         return false;
     }
 
-    /**
-     * @param null $member
-     *
-     * @return bool
-     */
-    public function canDelete($member = null)
+    public function canDelete($member = null): bool
     {
         return false;
     }
 
-    /**
-     * @param null $member
-     * @param array $context
-     *
-     * @return bool
-     */
-    public function canCreate($member = null, $context = [])
+    public function canCreate($member = null, $context = []): bool
     {
         return false;
     }

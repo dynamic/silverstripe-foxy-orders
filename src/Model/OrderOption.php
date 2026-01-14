@@ -2,45 +2,28 @@
 
 namespace Dynamic\Foxy\Orders\Model;
 
+use Dynamic\Foxy\Model\Variation;
 use SilverStripe\ORM\DataObject;
 
 /**
- * Class OrderOption
- * @package Dynamic\Foxy\Model
- *
- * @property \SilverStripe\ORM\FieldType\DBVarchar Name
- * @property \SilverStripe\ORM\FieldType\DBVarchar Value
- * @property int OrderDetailID
- *
- * @method OrderDetail OrderDetail
+ * Represents a product variation selected for an order detail item.
  */
-class OrderOption extends DataObject
+class OrderVariation extends DataObject
 {
-    /**
-     * @var array
-     */
-    private static $db = array(
+    private static array $db = [
         'Name' => 'Varchar(200)',
         'Value' => 'Varchar(200)',
-    );
+    ];
 
-    /**
-     * @var array
-     */
-    private static $has_one = array(
+    private static array $has_one = [
         'OrderDetail' => OrderDetail::class,
-    );
+        'Variation' => Variation::class,
+    ];
 
-    /**
-     * @var array
-     */
-    private static $summary_fields = array(
+    private static array $summary_fields = [
         'Name',
         'Value',
-    );
+    ];
 
-    /**
-     * @var string
-     */
-    private static $table_name = 'FoxyOrderOption';
+    private static string $table_name = 'FoxyOrderVariation';
 }
