@@ -3,20 +3,20 @@
 namespace Dynamic\Foxy\Orders\Extension;
 
 use Dynamic\Foxy\Orders\Factory\OrderFactory;
-use Dynamic\Foxy\Parser\Foxy\Transaction;
+use Dynamic\Foxy\Parser\Foxy\TransactionInterface;
 use SilverStripe\Core\Extension;
 
 /**
- * Class FoxyControllerOrderExtension
- * @package Dynamic\Foxy\Orders\Extension
+ * Extension to process orders from Foxy transaction data.
  */
 class FoxyControllerOrderExtension extends Extension
 {
     /**
-     * @param Transaction $transaction
+     * Process incoming transaction data and create/update orders.
+     *
      * @throws \SilverStripe\ORM\ValidationException
      */
-    public function doAdditionalParse(Transaction $transaction)
+    public function doAdditionalParse(TransactionInterface $transaction): void
     {
         OrderFactory::create($transaction)->getOrder();
     }
