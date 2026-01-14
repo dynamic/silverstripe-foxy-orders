@@ -10,8 +10,7 @@ use SilverStripe\Security\Member;
 use SilverStripe\View\ArrayData;
 
 /**
- * Class OrderFactory
- * @package Dynamic\Foxy\Orders\Factory
+ * Factory for creating/updating Order records from Foxy transaction data.
  */
 class OrderFactory extends FoxyFactory
 {
@@ -19,18 +18,14 @@ class OrderFactory extends FoxyFactory
     use Extensible;
     use Injectable;
 
-    /**
-     * @var Order
-     */
-    private $order;
+    private ?Order $order = null;
 
     /**
      * Return the Order object from a given transaction data set.
      *
-     * @return Order
      * @throws \SilverStripe\ORM\ValidationException
      */
-    public function getOrder()
+    public function getOrder(): Order
     {
         if (!$this->order instanceof Order) {
             $this->setOrder();
@@ -42,17 +37,18 @@ class OrderFactory extends FoxyFactory
     /**
      * Find and update, or create new Order record and set.
      *
-     * @return $this
      * @throws \SilverStripe\ORM\ValidationException
      */
-    protected function setOrder()
+    protected function setOrder(): static
     {
         /** @var ArrayData $transaction */
         $transaction = $this->getTransaction()->getParsedTransactionData()->getField('transaction');
 
         /** @var $order Order */
-        if ($transaction->hasField('id')
-            && !($order = Order::get()->filter('OrderID', $transaction->getField('id'))->first())) {
+        if (
+            $transaction->hasField('id')
+            && !($order = Order::get()->filter('OrderID', $transaction->getField('id'))->first())
+        ) {
             $order = Order::create();
         }
 
@@ -81,10 +77,7 @@ class OrderFactory extends FoxyFactory
         return $this;
     }
 
-    /**
-     * @param Order $order
-     */
-    private function cleanRelatedOrderData(Order $order)
+    private function cleanRelatedOrderData(Order $order): void
     {
         $order->Details()->removeAll();
     }

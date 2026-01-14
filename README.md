@@ -2,35 +2,29 @@
 
 Add order history to your SilverStripe Foxy store.
 
-[![Build Status](https://travis-ci.org/dynamic/silverstripe-foxy-orders.svg?branch=master)](https://travis-ci.org/dynamic/silverstripe-foxy-orders)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/dynamic/silverstripe-foxy-orders/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/dynamic/silverstripe-foxy-orders/?branch=master)
-[![Build Status](https://scrutinizer-ci.com/g/dynamic/silverstripe-foxy-orders/badges/build.png?b=master)](https://scrutinizer-ci.com/g/dynamic/silverstripe-foxy-orders/build-status/master)
-[![codecov](https://codecov.io/gh/dynamic/silverstripe-foxy-orders/branch/master/graph/badge.svg)](https://codecov.io/gh/dynamic/silverstripe-foxy-orders)
-
 [![Latest Stable Version](https://poser.pugx.org/dynamic/silverstripe-foxy-orders/v/stable)](https://packagist.org/packages/dynamic/silverstripe-foxy-orders)
 [![Total Downloads](https://poser.pugx.org/dynamic/silverstripe-foxy-orders/downloads)](https://packagist.org/packages/dynamic/silverstripe-foxy-orders)
-[![Latest Unstable Version](https://poser.pugx.org/dynamic/silverstripe-foxy-orders/v/unstable)](https://packagist.org/packages/dynamic/silverstripe-foxy-orders)
 [![License](https://poser.pugx.org/dynamic/silverstripe-foxy-orders/license)](https://packagist.org/packages/dynamic/silverstripe-foxy-orders)
-
 
 ## Requirements
 
-* SilverStripe ^4.0
-* SilverStripe Foxy ^1.0
+* PHP ^8.1
+* SilverStripe ^5.0
+* SilverStripe Foxy Feed Parser ^2.0
 
 ## Installation
 
-```
+```bash
 composer require dynamic/silverstripe-foxy-orders
 ```
 
 ## License
 
-See [License](license.md)
+See [License](LICENSE.md)
 
 ## Configuration
 
-Add the following to `foxy.yml`:
+Add the following to your project's YAML configuration:
 
 ```yaml
 SilverStripe\Security\Member:
@@ -39,23 +33,21 @@ SilverStripe\Security\Member:
 ```
 
 ## Maintainers
- *  [Dynamic](http://www.dynamicagency.com) (<dev@dynamicagency.com>)
- 
+
+* [Dynamic](http://www.dynamicagency.com) (<dev@dynamicagency.com>)
+
 ## Bugtracker
 
-Bugs are tracked in the issues section of this repository. Before submitting an issue please read over 
-existing issues to ensure yours is unique. 
- 
+Bugs are tracked in the issues section of this repository. Before submitting an issue please read over existing issues to ensure yours is unique.
+
 If the issue does look like a new bug:
- 
- - Create a new issue
- - Describe the steps required to reproduce your issue, and the expected outcome. Unit tests, screenshots 
- and screencasts can help here.
- - Describe your environment as detailed as possible: SilverStripe version, Browser, PHP version, 
- Operating System, any installed SilverStripe modules.
- 
-Please report security issues to the module maintainers directly. Please don't file security issues in the bugtracker.
- 
-## Development and contribution
+
+- Create a new issue
+- Describe the steps required to reproduce your issue
+- Describe your environment: SilverStripe version, PHP version, Operating System
+
+Please report security issues to the module maintainers directly.
+
+## Development and Contribution
 
 If you would like to make contributions to the module please ensure you raise a pull request and discuss with the module maintainers.

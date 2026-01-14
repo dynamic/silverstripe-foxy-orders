@@ -5,27 +5,20 @@ namespace Dynamic\Foxy\Orders\Factory;
 use Dynamic\Foxy\Model\FoxyHelper;
 use Dynamic\Foxy\Model\Variation;
 use Dynamic\Foxy\Orders\Model\OrderDetail;
-use Dynamic\Foxy\Orders\Model\OrderVariation;
-use Dynamic\Foxy\Products\Page\ShippableProduct;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\View\ArrayData;
 
 /**
- * Class OrderDetailFactory
- * @package Dynamic\Foxy\Orders\Factory
+ * Factory for creating OrderDetail records from Foxy product data.
  */
 class OrderDetailFactory extends FoxyFactory
 {
-    /**
-     * @var ArrayList
-     */
-    private $order_details;
+    private ?ArrayList $order_details = null;
 
     /**
-     * @return $this
      * @throws \SilverStripe\ORM\ValidationException
      */
-    protected function setOrderDetails()
+    protected function setOrderDetails(): static
     {
         $details = ArrayList::create();
 
@@ -68,10 +61,9 @@ class OrderDetailFactory extends FoxyFactory
     }
 
     /**
-     * @return ArrayList
      * @throws \SilverStripe\ORM\ValidationException
      */
-    public function getOrderDetails()
+    public function getOrderDetails(): ArrayList
     {
         if (!$this->order_details) {
             $this->setOrderDetails();

@@ -9,55 +9,40 @@ use SilverStripe\ORM\ArrayList;
 use SilverStripe\View\ArrayData;
 
 /**
- * Class OrderOptionFactory
- * @package Dynamic\Foxy\Orders\Factory
+ * Factory for creating OrderOption records from Foxy product option data.
  */
 class OrderOptionFactory
 {
     use Configurable;
     use Injectable;
 
-    /**
-     * @var
-     */
-    private $order_options;
+    private ?ArrayList $order_options = null;
 
-    /**
-     * @var ArrayData
-     */
-    private $foxy_product;
+    private ?ArrayData $foxy_product = null;
 
-    public function __construct(ArrayData $foxyProduct = null)
+    public function __construct(?ArrayData $foxyProduct = null)
     {
-        if ($foxyProduct instanceof ArrayData && $foxyProduct !== null) {
+        if ($foxyProduct instanceof ArrayData) {
             $this->setFoxyProduct($foxyProduct);
         }
     }
 
-    /**
-     * @param $foxyProduct
-     * @return $this
-     */
-    public function setFoxyProduct($foxyProduct)
+    public function setFoxyProduct(ArrayData $foxyProduct): static
     {
         $this->foxy_product = $foxyProduct;
 
         return $this;
     }
 
-    /**
-     * @return ArrayData
-     */
-    protected function getFoxyProduct()
+    protected function getFoxyProduct(): ?ArrayData
     {
         return $this->foxy_product;
     }
 
     /**
-     * @return $this
      * @throws \SilverStripe\ORM\ValidationException
      */
-    protected function setOrderOptions()
+    protected function setOrderOptions(): static
     {
         $options = ArrayList::create();
 
@@ -81,10 +66,9 @@ class OrderOptionFactory
     }
 
     /**
-     * @return ArrayList
      * @throws \SilverStripe\ORM\ValidationException
      */
-    public function getOrderOptions()
+    public function getOrderOptions(): ArrayList
     {
         if (!$this->order_options instanceof ArrayList) {
             $this->setOrderOptions();

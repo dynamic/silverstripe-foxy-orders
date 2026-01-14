@@ -7,45 +7,30 @@ use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
 
 /**
- * Class FoxyFactory
- * @package Dynamic\Foxy\Orders\Factory
+ * Base factory class for processing Foxy transaction data.
  */
 class FoxyFactory
 {
     use Configurable;
     use Injectable;
 
-    /**
-     * @var Transaction
-     */
-    private $transaction;
+    private ?Transaction $transaction = null;
 
-    /**
-     * OrderDetailFactory constructor.
-     * @param Transaction|null $transaction
-     */
-    public function __construct(Transaction $transaction = null)
+    public function __construct(?Transaction $transaction = null)
     {
-        if ($transaction instanceof Transaction && $transaction !== null) {
+        if ($transaction instanceof Transaction) {
             $this->setTransaction($transaction);
         }
     }
 
-    /**
-     * @param Transaction $transaction
-     * @return $this
-     */
-    public function setTransaction(Transaction $transaction)
+    public function setTransaction(Transaction $transaction): static
     {
         $this->transaction = $transaction;
 
         return $this;
     }
 
-    /**
-     * @return Transaction
-     */
-    protected function getTransaction()
+    protected function getTransaction(): ?Transaction
     {
         return $this->transaction;
     }
