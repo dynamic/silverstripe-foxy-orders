@@ -1,0 +1,73 @@
+<?php
+
+namespace Dynamic\Foxy\Orders\Tests\Factory;
+
+use Dynamic\Foxy\Orders\Factory\OrderFactory;
+use Dynamic\Foxy\Orders\Model\Order;
+use Dynamic\Foxy\Parser\Foxy\JsonTransaction;
+use Dynamic\Foxy\Parser\Foxy\TransactionInterface;
+use SilverStripe\Dev\SapphireTest;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\Security\Member;
+use SilverStripe\View\ArrayData;
+
+/**
+ * Tests for OrderFactory class.
+ */
+class OrderFactoryTest extends SapphireTest
+{
+    protected static $fixture_file = '../fixtures.yml';
+
+    /**
+     * Helper to avoid manifest issues in vendor tests
+     */
+    protected function getItemPath($filename)
+    {
+        return \SilverStripe\Control\Director::baseFolder() . '/vendor/dynamic/silverstripe-foxy-orders/tests/fixtures.yml';
+    }
+
+    /**
+     * Create a mock transaction interface for testing.
+     */
+    protected function createMockTransaction(): TransactionInterface
+    {
+        $json = json_encode([
+            'id' => 99999,
+            'store_id' => 1,
+            'is_test' => true,
+            'transaction_date' => '2026-01-13T12:00:00-0600',
+            'customer_id' => 100,
+            'customer_first_name' => 'Test',
+            'customer_last_name' => 'User',
+            'customer_email' => 'test@example.com',
+            'total_item_price' => 50.00,
+            'total_tax' => 4.25,
+            'total_shipping' => 5.00,
+            'total_order' => 59.25,
+            'receipt_url' => 'https://foxy.io/receipt/99999',
+            'status' => 'completed',
+            '_embedded' => [
+                'fx:items' => [],
+                'fx:discounts' => [],
+                'fx:custom_fields' => [],
+            ],
+        ]);
+
+        return JsonTransaction::create($json);
+    }
+
+    public function testOrderFactoryAcceptsTransactionInterface(): void
+    {
+        $transaction = $this->createMockTransaction();
+        $factory = OrderFactory::create($transaction);
+
+        $this->assertInstanceOf(OrderFactory::class, $factory);
+    }
+
+    public function testOrderFactoryConstructorWithNull(): void
+    {
+        $factory = OrderFactory::create(null);
+
+        $this->assertInstanceOf(OrderFactory::class, $factory);
+    }
+}

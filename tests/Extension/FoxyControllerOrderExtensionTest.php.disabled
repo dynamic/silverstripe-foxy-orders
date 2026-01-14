@@ -1,0 +1,31 @@
+<?php
+
+namespace Dynamic\Foxy\Orders\Tests\Extension;
+
+use Dynamic\Foxy\Orders\Extension\FoxyControllerOrderExtension;
+use Dynamic\Foxy\Parser\Foxy\JsonTransaction;
+use Dynamic\Foxy\Parser\Foxy\TransactionInterface;
+use SilverStripe\Dev\SapphireTest;
+
+/**
+ * Tests for FoxyControllerOrderExtension.
+ */
+class FoxyControllerOrderExtensionTest extends SapphireTest
+{
+    protected $usesDatabase = false;
+
+    public function testExtensionAcceptsTransactionInterface(): void
+    {
+        $extension = FoxyControllerOrderExtension::create();
+
+        // Verify the method signature accepts TransactionInterface
+        $reflection = new \ReflectionMethod($extension, 'doAdditionalParse');
+        $parameters = $reflection->getParameters();
+
+        $this->assertCount(1, $parameters);
+
+        $type = $parameters[0]->getType();
+        $this->assertNotNull($type);
+        $this->assertEquals(TransactionInterface::class, $type->getName());
+    }
+}

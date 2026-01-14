@@ -13,16 +13,16 @@ use SilverStripe\Control\HTTPRequest;
  */
 class OrderIDReprocess extends BuildTask
 {
-    protected string $title = 'Reprocess Order ID';
+    protected $title = 'Reprocess Order ID';
 
-    protected string $description = 'Reprocess Orders to correct order ID';
+    protected $description = 'Reprocess Orders to correct order ID';
 
-    private static string $segment = 'OrderIDReprocess';
+    private static $segment = 'OrderIDReprocess';
 
     /**
      * @throws \SilverStripe\ORM\ValidationException
      */
-    public function run(HTTPRequest $request): void
+    public function run($request): void
     {
         foreach ($this->yieldOrders() as $order) {
             // Note: Stored responses are always XML format from legacy datafeed
