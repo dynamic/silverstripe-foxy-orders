@@ -3,6 +3,7 @@
 namespace Dynamic\Foxy\Orders\Page;
 
 use Dynamic\Foxy\Orders\Model\Order;
+use SilverStripe\Control\HTTPRequest;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\PaginatedList;
@@ -40,7 +41,7 @@ class OrderHistoryController extends \PageController
     /**
      * @return array
      */
-    public function index()
+    public function index(HTTPRequest $request)
     {
         $this->checkMember();
 
