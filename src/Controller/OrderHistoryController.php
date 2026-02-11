@@ -9,6 +9,10 @@ use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\PaginatedList;
 use SilverStripe\Security\Security;
 
+/**
+ * Class OrderHistoryController
+ * @package Dynamic\Foxy\Orders\Page
+ */
 class OrderHistoryController extends \PageController
 {
     /**
@@ -19,7 +23,7 @@ class OrderHistoryController extends \PageController
     ];
 
     /**
-     * @var PaginatedList
+     * @var PaginatedList|ArrayList
      */
     private $order_paginated_list;
 
@@ -48,6 +52,9 @@ class OrderHistoryController extends \PageController
         return [];
     }
 
+    /**
+     * @return $this
+     */
     protected function setOrderPaginatedList()
     {
         if (Security::getCurrentUser()) {
@@ -69,7 +76,7 @@ class OrderHistoryController extends \PageController
     }
 
     /**
-     * @return PaginatedList
+     * @return PaginatedList|ArrayList
      */
     public function OrderPaginatedList()
     {
